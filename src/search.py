@@ -2,6 +2,7 @@ import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+
 def process_data(filepath):
     """
     Load JSON data from a file and preprocess it for future similarity calculation.
@@ -11,8 +12,8 @@ def process_data(filepath):
 
     Returns:
         tuple: A tuple containing:
-            - courses (list): List of dictionaries, each representing a course.
-            - corpus (list): List of strings, each containing combined name, summary, and description of a course.
+            - courses (list): List of dictionaries each representing a course.
+            - corpus (list): List of strings each containing combined name, summary and description of a course.
     """
 
     # Load the JSON data
@@ -23,9 +24,11 @@ def process_data(filepath):
     corpus = []
     # Each course is a dictionary
     for course in courses:
-        corpus.append(' '.join([course['name'], course['summary'], course['description']]).lower())
+        corpus.append(
+            ' '.join([course['name'], course['summary'], course['description']]).lower())
 
     return courses, corpus
+
 
 def calculate_similarity_scores(query, courses, corpus):
     """
@@ -34,13 +37,13 @@ def calculate_similarity_scores(query, courses, corpus):
     Args:
         query (str): The search query.
         courses (list): List of dictionaries, each representing a course.
-        corpus (list): List of strings, each containing combined name, summary, and description of a course.
+        corpus (list): List of strings, each containing combined name, summary and description of a course.
 
     Returns:
         list: A list of tuples containing similarity scores and corresponding course dictionaries, sorted in descending order of similarity scores.
     """
 
-    # Vectorise data to enable us to compute cosine similarity    
+    # Vectorise data to enable us to compute cosine similarity
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(corpus)
 
@@ -51,11 +54,14 @@ def calculate_similarity_scores(query, courses, corpus):
     similarity_scores = cosine_similarity(query_vector, tfidf_matrix)
 
     # Store tuples of (score, course) in a list
-    score_course_pairs = [(score, courseDict) for score, courseDict in zip(similarity_scores[0], courses)]
+    score_course_pairs = [(score, courseDict)
+                          for score, courseDict in zip(similarity_scores[0], courses)]
     # Sort the list of tuples based on the score in descending order
-    sorted_courses = sorted(score_course_pairs, key=lambda x: x[0], reverse=True)
+    sorted_courses = sorted(
+        score_course_pairs, key=lambda x: x[0], reverse=True)
 
     return sorted_courses
+
 
 def display_results(sorted_courses):
     """
@@ -73,6 +79,7 @@ def display_results(sorted_courses):
         print(f"   Link: {courseDict['course_link']}")
         print("\n")
 
+
 if __name__ == "__main__":
     filepath = input("Enter the filpath for the Json file: ")
     courses, corpus = process_data(filepath)
@@ -81,4 +88,3 @@ if __name__ == "__main__":
     sorted_courses = calculate_similarity_scores(query, courses, corpus)
 
     display_results(sorted_courses)
-    
