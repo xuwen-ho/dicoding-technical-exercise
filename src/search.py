@@ -81,7 +81,7 @@ def display_results(sorted_courses):
 
 
 if __name__ == "__main__":
-    filepath = input("Enter the filpath for the Json file: ")
+    filepath = input("Enter the filpath for the JSON file: ")
     courses, corpus = process_data(filepath)
 
     query = input("Enter your search query: ").lower()
